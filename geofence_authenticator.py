@@ -1,6 +1,4 @@
 import streamlit as st
-import folium
-from geopy.distance import geodesic
 
 st.title("Autenticação Baseada em Geolocalização")
 
@@ -19,9 +17,8 @@ st.markdown(
 
     function showPosition(position) {
         console.log("showPosition called");
-        document.getElementById("latitude").value = position.coords.latitude;
-        document.getElementById("longitude").value = position.coords.longitude;
-        document.getElementById("geoForm").submit();
+        document.getElementById("latitude").innerHTML = position.coords.latitude;
+        document.getElementById("longitude").innerHTML = position.coords.longitude;
     }
 
     function showError(error) {
@@ -44,44 +41,12 @@ st.markdown(
     </script>
 
     <button onclick="getLocation()">Obter Coordenadas</button>
-    <form id="geoForm">
-        <input type="hidden" id="latitude" name="latitude">
-        <input type="hidden" id="longitude" name="longitude">
-    </form>
+    <p>Latitude: <span id="latitude"></span></p>
+    <p>Longitude: <span id="longitude"></span></p>
     <p id="demo"></p>
     """,
     unsafe_allow_html=True,
 )
 
-# Obter parâmetros de consulta
-query_params = st.query_params
-latitude = query_params.get("latitude", [None])[0]
-longitude = query_params.get("longitude", [None])[0]
-
-# Verificar se as coordenadas foram capturadas
-if latitude and longitude:
-    st.write(f"Coordenadas capturadas:")
-    st.write(f"Latitude: {latitude}")
-    st.write(f"Longitude: {longitude}")
-
-    user_location = (float(latitude), float(longitude))
-
-    # Criar o mapa centrado na localização do usuário
-    m = folium.Map(location=user_location, zoom_start=15)
-
-    # Adicionar um círculo com raio de 100 metros ao redor da localização do usuário
-    folium.Circle(
-        radius=100,
-        location=user_location,
-        color='blue',
-        fill=True,
-        fill_color='blue'
-    ).add_to(m)
-
-    # Adicionar a posição do usuário ao mapa com um marcador
-    folium.Marker(location=user_location, popup=f"Você está aqui: {latitude}, {longitude}").add_to(m)
-
-    # Exibir o mapa no Streamlit
-    st.markdown(m._repr_html_(), unsafe_allow_html=True)
-else:
-    st.warning("Coordenadas não capturadas. Clique no botão 'Obter Coordenadas' para tentar novamente.")
+# Informação adicional para os usuários de desktop
+st.info("Se você estiver no desktop, habilite a identificação de coordenadas no seu navegador.")
