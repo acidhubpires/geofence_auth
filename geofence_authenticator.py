@@ -1,91 +1,57 @@
 import streamlit as st
+from streamlit_js_eval import streamlit_js_eval
 
 st.title("Autenticação Baseada em Geolocalização")
 
-# Inserindo o código HTML e JavaScript no Streamlit
-st.markdown(
-    """
-    <style>
-        .gfg {
-            font-size: 40px;
-            font-weight: bold;
-            color: #009900;
-            margin-left: 20px;
-        }
+# Função JavaScript para obter coordenadas do usuário
+get_location_script = """
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+        document.getElementById("demo").innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
 
-        .geeks {
-            margin-left: 150px;
-        }
+function showPosition(position) {
+    var coords = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+    };
+    document.dispatchEvent(new CustomEvent("returnCoords", {detail: coords}));
+}
 
-        p {
-            font-size: 20px;
-            margin-left: 20px;
-        }
-    </style>
+function showError(error) {
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            document.getElementById("demo").innerHTML = "User denied the request for Geolocation.";
+            break;
+        case error.POSITION_UNAVAILABLE:
+            document.getElementById("demo").innerHTML = "Location information is unavailable.";
+            break;
+        case error.TIMEOUT:
+            document.getElementById("demo").innerHTML = "The request to get user location timed out.";
+            break;
+        case error.UNKNOWN_ERROR:
+            document.getElementById("demo").innerHTML = "An unknown error occurred.";
+            break;
+    }
+    document.dispatchEvent(new CustomEvent("returnCoords", {detail: null}));
+}
 
-    <div class="gfg">GeeksforGeeks</div>
-    <p>Display location in map</p>
-    <button class="geeks" type="button" onclick="getlocation();">
-        Current Position
-    </button>
-    <div id="demo2" style="width: 500px; height: 500px"></div>
+getLocation();
+"""
 
-    <script src="https://maps.google.com/maps/api/js?sensor=false"></script>
-    <script type="text/javascript">
-        function getlocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showLoc, errHand);
-            }
-        }
-        function showLoc(pos) {
-            latt = pos.coords.latitude;
-            long = pos.coords.longitude;
-            var lattlong = new google.maps.LatLng(latt, long);
-            var OPTions = {
-                center: lattlong,
-                zoom: 10,
-                mapTypeControl: true,
-                navigationControlOptions: {
-                    style: google.maps.NavigationControlStyle.SMALL,
-                },
-            };
-            var mapg = new google.maps.Map(
-                document.getElementById("demo2"),
-                OPTions
-            );
-            var markerg = new google.maps.Marker({
-                position: lattlong,
-                map: mapg,
-                title: "You are here!",
-            });
-        }
+# Executa o script e obtém as coordenadas
+coords = streamlit_js_eval(get_location_script, "Obtendo coordenadas", event_name="returnCoords")
 
-        function errHand(err) {
-            switch (err.code) {
-                case err.PERMISSION_DENIED:
-                    result.innerHTML =
-                        "The application doesn't have the permission" +
-                        "to make use of location services";
-                    break;
-                case err.POSITION_UNAVAILABLE:
-                    result.innerHTML = 
-                        "The location of the device is uncertain";
-                    break;
-                case err.TIMEOUT:
-                    result.innerHTML = 
-                        "The request to get user location timed out";
-                    break;
-                case err.UNKNOWN_ERROR:
-                    result.innerHTML =
-                        "Time to fetch location information exceeded" +
-                        "the maximum timeout interval";
-                    break;
-            }
-        }
-    </script>
-    """,
-    unsafe_allow_html=True,
-)
+# Verificar se as coordenadas foram capturadas
+if coords:
+    st.write(f"Coordenadas capturadas:")
+    st.write(f"Latitude: {coords['latitude']}")
+    st.write(f"Longitude: {coords['longitude']}")
+else:
+    st.warning("Coordenadas não capturadas. Clique no botão 'Obter Coordenadas' para tentar novamente.")
 
 # Informação adicional para os usuários de desktop
 st.info("Se você estiver no desktop, habilite a identificação de coordenadas no seu navegador.")
