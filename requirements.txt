@@ -1,3 +1,4 @@
 streamlit
 folium
 geopy
+streamlit-js-eval
