@@ -47,7 +47,7 @@ getLocation();
 """
 
 # Executa o script e obtém as coordenadas
-coords = streamlit_js_eval(get_location_script, key="get_location")
+coords = streamlit_js_eval(get_location_script, "Obtendo coordenadas")
 
 # Verificar se as coordenadas foram capturadas
 if coords:
