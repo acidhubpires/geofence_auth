@@ -54,7 +54,7 @@ st.markdown(
 )
 
 # Obter parâmetros de consulta
-query_params = st.experimental_get_query_params()
+query_params = st.query_params
 latitude = query_params.get("latitude", [None])[0]
 longitude = query_params.get("longitude", [None])[0]
 
