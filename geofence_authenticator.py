@@ -21,7 +21,7 @@ function showPosition(position) {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude
     };
-    return coords;
+    document.dispatchEvent(new CustomEvent("returnCoords", {detail: coords}));
 }
 
 function showError(error) {
@@ -40,14 +40,14 @@ function showError(error) {
             console.log("An unknown error occurred.");
             break;
     }
-    return null;
+    document.dispatchEvent(new CustomEvent("returnCoords", {detail: null}));
 }
 
 getLocation();
 """
 
 # Executa o script e obtém as coordenadas
-coords = streamlit_js_eval(get_location_script, "Obtendo coordenadas")
+coords = streamlit_js_eval(get_location_script, "Obtendo coordenadas", event_name="returnCoords")
 
 # Verificar se as coordenadas foram capturadas
 if coords:
