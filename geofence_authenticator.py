@@ -4,22 +4,42 @@ from geopy.distance import geodesic
 
 st.title("Autenticação Baseada em Geolocalização")
 
-# Função JavaScript para obter coordenadas do usuário
+# Função JavaScript para obter coordenadas do usuário com logs de depuração
 st.markdown(
     """
     <script>
     function getLocation() {
+        console.log("getLocation called");
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
         } else {
             document.getElementById("demo").innerHTML = "Geolocation is not supported by this browser.";
         }
     }
 
     function showPosition(position) {
+        console.log("showPosition called");
         document.getElementById("latitude").value = position.coords.latitude;
         document.getElementById("longitude").value = position.coords.longitude;
         document.getElementById("geoForm").submit();
+    }
+
+    function showError(error) {
+        console.log("showError called");
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                document.getElementById("demo").innerHTML = "User denied the request for Geolocation.";
+                break;
+            case error.POSITION_UNAVAILABLE:
+                document.getElementById("demo").innerHTML = "Location information is unavailable.";
+                break;
+            case error.TIMEOUT:
+                document.getElementById("demo").innerHTML = "The request to get user location timed out.";
+                break;
+            case error.UNKNOWN_ERROR:
+                document.getElementById("demo").innerHTML = "An unknown error occurred.";
+                break;
+        }
     }
     </script>
 
@@ -33,30 +53,35 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-latitude = st.query_params.get("latitude", [None])[0]
-longitude = st.query_params.get("longitude", [None])[0]
+# Obter parâmetros de consulta
+query_params = st.experimental_get_query_params()
+latitude = query_params.get("latitude", [None])[0]
+longitude = query_params.get("longitude", [None])[0]
 
+# Verificar se as coordenadas foram capturadas
 if latitude and longitude:
+    st.write(f"Coordenadas capturadas:")
     st.write(f"Latitude: {latitude}")
     st.write(f"Longitude: {longitude}")
 
-    # Definir o centro da geofence e o raio em metros
-    geofence_center = (40.748817, -73.985428)  # Exemplo: Coordenadas da Times Square, NYC
-    geofence_radius = 500  # 500 metros
-
     user_location = (float(latitude), float(longitude))
 
-    # Função para verificar se o usuário está dentro da geofence
-    def is_within_geofence(user_location, geofence_center, geofence_radius):
-        distance = geodesic(user_location, geofence_center).meters
-        return distance <= geofence_radius
+    # Criar o mapa centrado na localização do usuário
+    m = folium.Map(location=user_location, zoom_start=15)
 
-    if is_within_geofence(user_location, geofence_center, geofence_radius):
-        st.success("Você está dentro da geofence.")
-    else:
-        st.error("Você está fora da geofence.")
+    # Adicionar um círculo com raio de 100 metros ao redor da localização do usuário
+    folium.Circle(
+        radius=100,
+        location=user_location,
+        color='blue',
+        fill=True,
+        fill_color='blue'
+    ).add_to(m)
 
-    # Criar o mapa centrado na geofence
-    m = folium.Map(location=geofence_center, zoom_start=15)
+    # Adicionar a posição do usuário ao mapa com um marcador
+    folium.Marker(location=user_location, popup=f"Você está aqui: {latitude}, {longitude}").add_to(m)
 
-    # Adicionar a geofence (círculo)
+    # Exibir o mapa no Streamlit
+    st.markdown(m._repr_html_(), unsafe_allow_html=True)
+else:
+    st.warning("Coordenadas não capturadas. Clique no botão 'Obter Coordenadas' para tentar novamente.")
