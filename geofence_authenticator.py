@@ -2,12 +2,11 @@ import streamlit as st
 
 st.title("Autenticação Baseada em Geolocalização")
 
-# Função JavaScript para obter coordenadas do usuário com logs de depuração
+# Função JavaScript para obter coordenadas do usuário
 st.markdown(
     """
     <script>
     function getLocation() {
-        console.log("getLocation called");
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition, showError);
         } else {
@@ -16,13 +15,11 @@ st.markdown(
     }
 
     function showPosition(position) {
-        console.log("showPosition called");
         document.getElementById("latitude").innerHTML = position.coords.latitude;
         document.getElementById("longitude").innerHTML = position.coords.longitude;
     }
 
     function showError(error) {
-        console.log("showError called");
         switch(error.code) {
             case error.PERMISSION_DENIED:
                 document.getElementById("demo").innerHTML = "User denied the request for Geolocation.";
