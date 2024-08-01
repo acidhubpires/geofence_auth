@@ -1,7 +1,7 @@
 .geopin {
     font-size: 40px;
     font-weight: bold;
-    color: #000900;
+    color: #009900;
     margin-left: 20px;
 }
 
@@ -21,4 +21,22 @@ p {
     height: 500px;
     width: 80%;
     margin: 20px auto;
+}
+
+/* Estilo para o rodapé */
+.footer {
+    text-align: center;
+    font-size: 16px;
+    color: #555;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-top: 1px solid #ddd;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.footer p {
+    margin: 5px 0;
 }

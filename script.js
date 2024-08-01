@@ -1,14 +1,14 @@
-// Inicialize o mapa com Leaflet
-var map = L.map('map').setView([0, 0], 2); // Centro no lat: 0, lon: 0 com zoom 2
+// Initialize the map
+var map = L.map('map').setView([0, 0], 2); // Center at lat: 0, lon: 0 with zoom 2
 
-// Adicione os tiles do OpenStreetMap
+// Add OpenStreetMap tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
 var marker;
 
-// Função para obter a localização do usuário
+// Function to get the user's location
 function getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition, showError);
@@ -17,13 +17,13 @@ function getLocation() {
     }
 }
 
-// Mostrar a posição no mapa
+// Show the position on the map
 function showPosition(position) {
     var lat = position.coords.latitude;
     var lon = position.coords.longitude;
 
-    // Atualizar vista do mapa e marcador
-    map.setView([lat, lon], 15); // Nível de zoom 15 para uma visão mais próxima
+    // Update map view and marker
+    map.setView([lat, lon], 15); // Zoom level 15 for a closer view
 
     if (marker) {
         marker.setLatLng([lat, lon]);
@@ -32,7 +32,7 @@ function showPosition(position) {
             .bindPopup("Você está aqui!").openPopup();
     }
 
-    // Capturar nome de usuário e coordenadas para hashing
+    // Capture username and coordinates for hashing
     var username = document.getElementById('username').value;
     if (username) {
         var data = {
@@ -41,42 +41,42 @@ function showPosition(position) {
             username: username
         };
         
-        // Gerar hash SHA256
+        // Generate SHA256 hash
         var hash = CryptoJS.SHA256(username + lat + lon).toString();
 
-        // Salvar coordenadas em um arquivo JSON
+        // Save coordinates to a JSON file
         saveDataAsJSON(data, hash);
     } else {
         alert("Por favor, insira seu nome.");
     }
 }
 
-// Salvar dados em arquivo JSON
+// Save data to JSON file
 function saveDataAsJSON(data, hash) {
-    // Converter dados para JSON
+    // Convert data to JSON
     var jsonData = JSON.stringify(data);
 
-    // Criar um objeto Blob a partir dos dados JSON
+    // Create a Blob object from the JSON data
     var blob = new Blob([jsonData], { type: "application/json" });
 
-    // Criar uma URL para o Blob
+    // Create a URL for the Blob
     var url = URL.createObjectURL(blob);
 
-    // Criar um elemento de link temporário
+    // Create a temporary link element
     var a = document.createElement("a");
     a.href = url;
-    a.download = hash + ".json"; // Use o hash como nome do arquivo
+    a.download = hash + ".json"; // Use the hash as the filename
     document.body.appendChild(a);
 
-    // Clique programaticamente no link para acionar o download
+    // Programmatically click the link to trigger the download
     a.click();
 
-    // Limpar
+    // Clean up
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
 
-// Tratar erros
+// Handle errors
 function showError(error) {
     switch (error.code) {
         case error.PERMISSION_DENIED:
