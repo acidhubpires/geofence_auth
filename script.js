@@ -1,29 +1,29 @@
-// Initialize the map
-var map = L.map('map').setView([0, 0], 2); // Center at lat: 0, lon: 0 with zoom 2
+// Inicialize o mapa com Leaflet
+var map = L.map('map').setView([0, 0], 2); // Centro no lat: 0, lon: 0 com zoom 2
 
-// Add OpenStreetMap tiles
+// Adicione os tiles do OpenStreetMap
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
 var marker;
 
-// Function to get the user's location
+// Função para obter a localização do usuário
 function getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition, showError);
     } else {
-        alert("Geolocatização não suportada nesse navegador.");
+        alert("Geolocalização não é suportada por este navegador.");
     }
 }
 
-// Show the position on the map
+// Mostrar a posição no mapa
 function showPosition(position) {
     var lat = position.coords.latitude;
     var lon = position.coords.longitude;
 
-    // Update map view and marker
-    map.setView([lat, lon], 15); // Zoom level 15 for a closer view
+    // Atualizar vista do mapa e marcador
+    map.setView([lat, lon], 15); // Nível de zoom 15 para uma visão mais próxima
 
     if (marker) {
         marker.setLatLng([lat, lon]);
@@ -32,7 +32,7 @@ function showPosition(position) {
             .bindPopup("Você está aqui!").openPopup();
     }
 
-    // Capture username and coordinates for hashing
+    // Capturar nome de usuário e coordenadas para hashing
     var username = document.getElementById('username').value;
     if (username) {
         var data = {
@@ -41,55 +41,55 @@ function showPosition(position) {
             username: username
         };
         
-        // Generate SHA256 hash
+        // Gerar hash SHA256
         var hash = CryptoJS.SHA256(username + lat + lon).toString();
 
-        // Save coordinates to a JSON file
+        // Salvar coordenadas em um arquivo JSON
         saveDataAsJSON(data, hash);
     } else {
         alert("Por favor, insira seu nome.");
     }
 }
 
-// Save data to JSON file
+// Salvar dados em arquivo JSON
 function saveDataAsJSON(data, hash) {
-    // Convert data to JSON
+    // Converter dados para JSON
     var jsonData = JSON.stringify(data);
 
-    // Create a Blob object from the JSON data
+    // Criar um objeto Blob a partir dos dados JSON
     var blob = new Blob([jsonData], { type: "application/json" });
 
-    // Create a URL for the Blob
+    // Criar uma URL para o Blob
     var url = URL.createObjectURL(blob);
 
-    // Create a temporary link element
+    // Criar um elemento de link temporário
     var a = document.createElement("a");
     a.href = url;
-    a.download = hash + ".json"; // Use the hash as the filename
+    a.download = hash + ".json"; // Use o hash como nome do arquivo
     document.body.appendChild(a);
 
-    // Programmatically click the link to trigger the download
+    // Clique programaticamente no link para acionar o download
     a.click();
 
-    // Clean up
+    // Limpar
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
 
-// Handle errors
+// Tratar erros
 function showError(error) {
     switch (error.code) {
         case error.PERMISSION_DENIED:
-            alert("User denied the request for Geolocation.");
+            alert("Usuário negou o pedido de Geolocalização.");
             break;
         case error.POSITION_UNAVAILABLE:
-            alert("Location information is unavailable.");
+            alert("Informação de localização está indisponível.");
             break;
         case error.TIMEOUT:
-            alert("The request to get user location timed out.");
+            alert("A solicitação para obter localização do usuário expirou.");
             break;
         case error.UNKNOWN_ERROR:
-            alert("An unknown error occurred.");
+            alert("Ocorreu um erro desconhecido.");
             break;
     }
 }
