@@ -1,0 +1,24 @@
+.geopin {
+    font-size: 40px;
+    font-weight: bold;
+    color: #009900;
+    margin-left: 20px;
+}
+
+.geotag {
+    margin-left: 20px;
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+}
+
+p {
+    font-size: 20px;
+    margin-left: 20px;
+}
+
+#map {
+    height: 500px;
+    width: 80%;
+    margin: 20px auto;
+}
