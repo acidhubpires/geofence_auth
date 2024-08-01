@@ -1,24 +1,60 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
+    <title>GeoTagTracker</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeoTagTracker</title>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        .geopin {
+            font-size: 40px;
+            font-weight: bold;
+            color: #009900;
+            margin-left: 20px;
+        }
+
+        .geotag {
+            margin-left: 20px;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+        }
+
+        p {
+            font-size: 20px;
+            margin-left: 20px;
+        }
+
+        #map {
+            height: 500px;
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
 </head>
+
 <body>
     <div class="geopin">GeoTagTracker</div>
-    <input type="text" id="username" placeholder="Insira seu nome" style="margin-left: 20px; margin-top: 20px; font-size: 18px;">
-    <p>Exibir localização no mapa</p>
-    <button class="geotag" type="button" onclick="getLocation();">Posição Atual</button>
+
+    <input type="text" id="username" placeholder="Enter your name" style="margin-left: 20px; margin-top: 20px; font-size: 18px;">
+
+    <p>Display location in map</p>
+
+    <button class="geotag" type="button" onclick="getLocation();">
+        Current Position
+    </button>
+
     <div id="map"></div>
 
-    <!-- Rodapé -->
-    <footer class="footer">
-        <p>GeoTagTracker by PIRESAAO / ACIDHUB / GPT4o</p>
-        <p>Licença de Uso do Código: MIT License</p>
+    <footer>
+        GeoTagTracker by PIRESAAO / ACIDHUB / GPT4o
     </footer>
 
     <!-- Leaflet JS -->
